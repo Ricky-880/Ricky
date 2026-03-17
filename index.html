@@ -1,81 +1,405 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="zh-CN">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>GlobalCross E-commerce | TikTok Shop Partner</title>
     <style>
         * { margin: 0; padding: 0; box-sizing: border-box; }
-        body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; line-height: 1.6; color: #333; }
+        body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Microsoft YaHei', 'Noto Sans SC', sans-serif; line-height: 1.6; color: #333; }
         .container { max-width: 1200px; margin: 0 auto; padding: 0 20px; }
         header { background: linear-gradient(135deg, #00f2ea 0%, #ff0050 100%); color: white; padding: 60px 0; }
         header h1 { font-size: 2.5rem; margin-bottom: 10px; }
         header p { font-size: 1.2rem; opacity: 0.9; }
         nav { background: #fff; box-shadow: 0 2px 10px rgba(0,0,0,0.1); position: sticky; top: 0; z-index: 100; }
-        nav ul { list-style: none; display: flex; justify-content: center; padding: 20px 0; }
-        nav ul li { margin: 0 20px; }
+        nav ul { list-style: none; display: flex; justify-content: center; padding: 20px 0; flex-wrap: wrap; }
+        nav ul li { margin: 0 15px; }
         nav ul li a { text-decoration: none; color: #333; font-weight: 500; }
+        .lang-switcher { display: flex; gap: 10px; margin-left: 20px; align-items: center; }
+        .lang-btn { padding: 5px 12px; border: 1px solid #ff0050; background: white; color: #ff0050; border-radius: 4px; cursor: pointer; font-size: 14px; transition: all 0.3s; }
+        .lang-btn:hover, .lang-btn.active { background: #ff0050; color: white; }
         section { padding: 60px 0; }
         .about { background: #f8f9fa; }
         .services { background: #fff; }
         .services-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 30px; margin-top: 40px; }
         .service-card { padding: 30px; border-radius: 10px; box-shadow: 0 5px 20px rgba(0,0,0,0.1); transition: transform 0.3s; }
         .service-card:hover { transform: translateY(-5px); }
-        .service-card h3 { color: #ff0050; margin-bottom: 15px; }
+        .service-card h3 { color: #ff0050; margin-bottom: 15px; font-size: 1.3rem; }
+        .service-card p { font-size: 0.95rem; }
         .contact { background: #00f2ea; color: white; }
         .contact-info { text-align: center; }
         .contact-info p { margin: 10px 0; font-size: 1.1rem; }
         footer { background: #333; color: white; text-align: center; padding: 30px 0; }
-        .btn { display: inline-block; background: #ff0050; color: white; padding: 12px 30px; border-radius: 5px; text-decoration: none; margin-top: 20px; }
+        .btn { display: inline-block; background: #ff0050; color: white; padding: 12px 30px; border-radius: 5px; text-decoration: none; margin-top: 20px; transition: background 0.3s; }
         .btn:hover { background: #e60045; }
         h2 { font-size: 2rem; margin-bottom: 30px; text-align: center; }
+        .stats-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); gap: 30px; margin-top: 40px; }
+        .stat-item { text-align: center; }
+        .stat-item h3 { font-size: 2.5rem; color: #ff0050; margin-bottom: 5px; }
+        .stat-item p { color: #666; }
+        .privacy-content { background: white; padding: 40px; border-radius: 10px; max-width: 900px; margin: 0 auto; }
+        .privacy-content h3 { color: #ff0050; margin: 25px 0 15px; font-size: 1.3rem; }
+        .privacy-content p { margin-bottom: 15px; line-height: 1.8; }
+        .privacy-content ul { margin-left: 25px; margin-bottom: 15px; line-height: 1.8; }
+        @media (max-width: 768px) {
+            header h1 { font-size: 1.8rem; }
+            nav ul { flex-direction: column; align-items: center; }
+            nav ul li { margin: 8px 0; }
+            .lang-switcher { margin-left: 0; margin-top: 10px; }
+            h2 { font-size: 1.5rem; }
+            .services-grid { grid-template-columns: 1fr; }
+        }
     </style>
 </head>
 <body>
+    <!-- Language Switcher -->
+    <div style="position: fixed; top: 10px; right: 10px; z-index: 1000; background: white; padding: 10px; border-radius: 8px; box-shadow: 0 2px 10px rgba(0,0,0,0.1);">
+        <select id="langSelect" onchange="changeLanguage(this.value)" style="padding: 8px 12px; border: 1px solid #ff0050; border-radius: 4px; font-size: 14px; cursor: pointer;">
+            <option value="zh">🇨🇳 中文</option>
+            <option value="en">🇺🇸 English</option>
+            <option value="th">🇹🇭 ไทย</option>
+            <option value="vi">🇻🇳 Tiếng Việt</option>
+            <option value="id">🇮🇩 Bahasa Indonesia</option>
+        </select>
+    </div>
+
+    <script>
+        // Language translations
+        const translations = {
+            zh: {
+                navAbout: "关于我们",
+                navServices: "服务",
+                navPrivacy: "隐私政策",
+                navContact: "联系我们",
+                headerTitle: "GlobalCross 电商",
+                headerSubtitle: "您值得信赖的 TikTok Shop 合作伙伴 | 跨境电商解决方案",
+                headerBtn: "立即联系",
+                aboutTitle: "关于我们",
+                aboutDesc: "GlobalCross 电商是一家专业的跨境电商公司，专注于在 TikTok Shop 平台为东南亚、北美和欧洲市场的客户提供运营服务。我们利用数据驱动的策略和 AI 赋能工具，提供卓越的客户体验，推动可持续业务增长。",
+                statExperience: "年经验",
+                statMarkets: "个市场",
+                statOrders: "订单处理",
+                statSatisfaction: "客户满意度",
+                servicesTitle: "我们的服务",
+                service1Title: "🛍️ TikTok Shop 运营",
+                service1Desc: "全方位的 TikTok Shop 管理服务，包括产品上架、订单履行、客户服务和跨市场表现优化。",
+                service2Title: "📊 数据分析",
+                service2Desc: "先进的分析和商业智能，追踪销售表现、客户行为和市场趋势，助力数据驱动决策。",
+                service3Title: "🎬 内容创作",
+                service3Desc: "为 TikTok 算法优化的专业视频内容制作，通过引人入胜的故事讲述推动互动和转化。",
+                service4Title: "🤖 AI 自动化",
+                service4Desc: "AI 驱动的客户服务、库存管理和营销自动化，提高效率并降低运营成本。",
+                service5Title: "🌍 跨境物流",
+                service5Desc: "与本地仓库和物流合作伙伴整合的物流解决方案，确保全球快速可靠配送。",
+                service6Title: "📈 营销策略",
+                service6Desc: "数据驱动的营销活动，包括网红合作、付费广告和有机增长策略。",
+                privacyTitle: "隐私政策",
+                privacyIntro: "GlobalCross 电商（\"我们\"、\"我们的\"）致力于保护您的隐私。本隐私政策说明我们如何收集、使用和保护您使用我们服务时的信息。",
+                privacyCollect: "我们收集的数据",
+                privacyCollectDesc: "我们收集以下类型的数据：",
+                privacyUse: "我们如何使用数据",
+                privacyUseDesc: "我们仅将数据用于以下目的：",
+                privacySecurity: "数据安全",
+                privacySecurityDesc: "我们实施行业标准的安全措施：",
+                privacyShare: "数据共享",
+                privacyShareDesc: "我们不会出售或与第三方共享您的数据，以下情况除外：",
+                privacyRights: "您的权利",
+                privacyRightsDesc: "您拥有以下权利：",
+                privacyRetention: "数据保留",
+                privacyRetentionDesc: "我们仅在必要期限内保留数据：",
+                privacyCompliance: "合规性",
+                privacyComplianceDesc: "我们遵守以下法规：",
+                privacyContact: "联系我们",
+                privacyContactDesc: "隐私问题或数据请求请联系：",
+                contactTitle: "联系我们",
+                footerText: "© 2025 GlobalCross 电商。保留所有权利。",
+                footerPrivacy: "隐私政策",
+                footerTerms: "服务条款"
+            },
+            en: {
+                navAbout: "About",
+                navServices: "Services",
+                navPrivacy: "Privacy",
+                navContact: "Contact",
+                headerTitle: "GlobalCross E-commerce",
+                headerSubtitle: "Your Trusted TikTok Shop Partner | Cross-Border E-commerce Solutions",
+                headerBtn: "Get in Touch",
+                aboutTitle: "About Us",
+                aboutDesc: "GlobalCross E-commerce is a professional cross-border e-commerce company specializing in TikTok Shop operations across Southeast Asia, North America, and European markets. We leverage data-driven strategies and AI-powered tools to deliver exceptional customer experiences and drive sustainable business growth.",
+                statExperience: "Years Experience",
+                statMarkets: "Markets Served",
+                statOrders: "Orders Processed",
+                statSatisfaction: "Customer Satisfaction",
+                servicesTitle: "Our Services",
+                service1Title: "🛍️ TikTok Shop Operations",
+                service1Desc: "Full-service TikTok Shop management including product listing, order fulfillment, customer service, and performance optimization across multiple markets.",
+                service2Title: "📊 Data Analytics",
+                service2Desc: "Advanced analytics and business intelligence to track sales performance, customer behavior, and market trends for data-driven decision making.",
+                service3Title: "🎬 Content Creation",
+                service3Desc: "Professional video content production optimized for TikTok's algorithm, driving engagement and conversions through compelling storytelling.",
+                service4Title: "🤖 AI Automation",
+                service4Desc: "AI-powered customer service, inventory management, and marketing automation to improve efficiency and reduce operational costs.",
+                service5Title: "🌍 Cross-Border Logistics",
+                service5Desc: "Integrated logistics solutions with local warehouses and shipping partners to ensure fast, reliable delivery worldwide.",
+                service6Title: "📈 Marketing Strategy",
+                service6Desc: "Data-driven marketing campaigns including influencer partnerships, paid advertising, and organic growth strategies.",
+                privacyTitle: "Privacy Policy",
+                privacyIntro: "GlobalCross E-commerce (\"we\", \"our\", \"us\") is committed to protecting your privacy. This Privacy Policy explains how we collect, use, and safeguard your information when you use our services.",
+                privacyCollect: "Data We Collect",
+                privacyCollectDesc: "We collect the following types of data:",
+                privacyUse: "How We Use Data",
+                privacyUseDesc: "We use this data solely for:",
+                privacySecurity: "Data Security",
+                privacySecurityDesc: "We implement industry-standard security measures:",
+                privacyShare: "Data Sharing",
+                privacyShareDesc: "We DO NOT sell or share your data with third parties except:",
+                privacyRights: "Your Rights",
+                privacyRightsDesc: "You have the right to:",
+                privacyRetention: "Data Retention",
+                privacyRetentionDesc: "We retain data only as long as necessary:",
+                privacyCompliance: "Compliance",
+                privacyComplianceDesc: "We comply with:",
+                privacyContact: "Contact Us",
+                privacyContactDesc: "For privacy questions or data requests:",
+                contactTitle: "Contact Us",
+                footerText: "© 2025 GlobalCross E-commerce. All rights reserved.",
+                footerPrivacy: "Privacy Policy",
+                footerTerms: "Terms of Service"
+            },
+            th: {
+                navAbout: "เกี่ยวกับเรา",
+                navServices: "บริการ",
+                navPrivacy: "นโยบายความเป็นส่วนตัว",
+                navContact: "ติดต่อเรา",
+                headerTitle: "GlobalCross E-commerce",
+                headerSubtitle: "พันธมิตร TikTok Shop ที่คุณไว้วางใจ | โซลูชันการค้าข้ามพรมแดน",
+                headerBtn: "ติดต่อเรา",
+                aboutTitle: "เกี่ยวกับเรา",
+                aboutDesc: "GlobalCross E-commerce เป็นบริษัทการค้าข้ามพรมแดนมืออาชีพ เชี่ยวชาญในการดำเนินงาน TikTok Shop ในตลาดเอเชียตะวันออกเฉียงเหนืออเมริกาและยุโรป",
+                statExperience: "ปีประสบการณ์",
+                statMarkets: "ตลาดที่ให้บริการ",
+                statOrders: "คำสั่งซื้อที่ดำเนินการ",
+                statSatisfaction: "ความพึงพอใจของลูกค้า",
+                servicesTitle: "บริการของเรา",
+                service1Title: "🛍️ การดำเนินงาน TikTok Shop",
+                service1Desc: "บริการจัดการ TikTok Shop แบบครบวงจร รวมถึงการแสดงรายการสินค้า การดำเนินการตามคำสั่งซื้อ บริการลูกค้า",
+                service2Title: "📊 การวิเคราะห์ข้อมูล",
+                service2Desc: "การวิเคราะห์ขั้นสูงและข่าวกรองทางธุรกิจเพื่อติดตามประสิทธิภาพการขาย พฤติกรรมลูกค้า",
+                service3Title: "🎬 การสร้างเนื้อหา",
+                service3Desc: "การผลิตเนื้อหาวิดีโอระดับมืออาชีพที่ปรับให้เหมาะสมกับอัลกอริทึมของ TikTok",
+                service4Title: "🤖 ระบบอัตโนมัติ AI",
+                service4Desc: "บริการลูกค้าด้วย AI การจัดการสินค้าคงคลัง และระบบอัตโนมัติทางการตลาด",
+                service5Title: "🌍 โลจิสติกส์ข้ามพรมแดน",
+                service5Desc: "โซลูชันโลจิสติกส์แบบบูรณาการกับคลังสินค้าในท้องถิ่นและพันธมิตรการขนส่ง",
+                service6Title: "📈 กลยุทธ์การตลาด",
+                service6Desc: "แคมเปญการตลาดที่ขับเคลื่อนด้วยข้อมูล รวมถึงความร่วมมือกับอินฟลูเอนเซอร์",
+                privacyTitle: "นโยบายความเป็นส่วนตัว",
+                privacyIntro: "GlobalCross E-commerce มุ่งมั่นที่จะปกป้องความเป็นส่วนตัวของคุณ",
+                privacyCollect: "ข้อมูลที่เรารวบรวม",
+                privacyCollectDesc: "เราเก็บรวบรวมข้อมูลประเภทต่อไปนี้:",
+                privacyUse: "วิธีการใช้ข้อมูล",
+                privacyUseDesc: "เราใช้ข้อมูลนี้เพื่อ:",
+                privacySecurity: "ความปลอดภัยของข้อมูล",
+                privacySecurityDesc: "เราใช้มาตรการรักษาความปลอดภัยมาตรฐานอุตสาหกรรม:",
+                privacyShare: "การแบ่งปันข้อมูล",
+                privacyShareDesc: "เราจะไม่ขายหรือแบ่งปันข้อมูลของคุณกับบุคคลที่สามยกเว้น:",
+                privacyRights: "สิทธิของคุณ",
+                privacyRightsDesc: "คุณมีสิทธิที่จะ:",
+                privacyRetention: "การเก็บรักษาข้อมูล",
+                privacyRetentionDesc: "เราเก็บรักษาข้อมูลเฉพาะเท่าที่จำเป็น:",
+                privacyCompliance: "การปฏิบัติตาม",
+                privacyComplianceDesc: "เราปฏิบัติตาม:",
+                privacyContact: "ติดต่อเรา",
+                privacyContactDesc: "สำหรับคำถามเกี่ยวกับความเป็นส่วนตัว:",
+                contactTitle: "ติดต่อเรา",
+                footerText: "© 2025 GlobalCross E-commerce สงวนลิขสิทธิ์",
+                footerPrivacy: "นโยบายความเป็นส่วนตัว",
+                footerTerms: "ข้อกำหนดการให้บริการ"
+            },
+            vi: {
+                navAbout: "Về chúng tôi",
+                navServices: "Dịch vụ",
+                navPrivacy: "Chính sách bảo mật",
+                navContact: "Liên hệ",
+                headerTitle: "GlobalCross E-commerce",
+                headerSubtitle: "Đối tác TikTok Shop đáng tin cậy | Giải pháp thương mại xuyên biên giới",
+                headerBtn: "Liên hệ ngay",
+                aboutTitle: "Về chúng tôi",
+                aboutDesc: "GlobalCross E-commerce là công ty thương mại điện tử xuyên biên giới chuyên nghiệp, chuyên về hoạt động TikTok Shop tại thị trường Đông Nam Á, Bắc Mỹ và Châu Âu.",
+                statExperience: "năm kinh nghiệm",
+                statMarkets: "thị trường phục vụ",
+                statOrders: "đơn hàng xử lý",
+                statSatisfaction: "hài lòng của khách hàng",
+                servicesTitle: "Dịch vụ của chúng tôi",
+                service1Title: "🛍️ Vận hành TikTok Shop",
+                service1Desc: "Quản lý TikTok Shop toàn diện bao gồm đăng sản phẩm, xử lý đơn hàng, dịch vụ khách hàng",
+                service2Title: "📊 Phân tích dữ liệu",
+                service2Desc: "Phân tích nâng cao và thông tin kinh doanh để theo dõi hiệu suất bán hàng",
+                service3Title: "🎬 Sáng tạo nội dung",
+                service3Desc: "Sản xuất nội dung video chuyên nghiệp tối ưu hóa cho thuật toán TikTok",
+                service4Title: "🤖 Tự động hóa AI",
+                service4Desc: "Dịch vụ khách hàng AI, quản lý kho và tự động hóa tiếp thị",
+                service5Title: "🌍 Hậu cần xuyên biên giới",
+                service5Desc: "Giải pháp hậu cần tích hợp với kho địa phương và đối tác vận chuyển",
+                service6Title: "📈 Chiến lược marketing",
+                service6Desc: "Chiến dịch marketing dựa trên dữ liệu bao gồm hợp tác với người ảnh hưởng",
+                privacyTitle: "Chính sách bảo mật",
+                privacyIntro: "GlobalCross E-commerce cam kết bảo vệ quyền riêng tư của bạn",
+                privacyCollect: "Dữ liệu chúng tôi thu thập",
+                privacyCollectDesc: "Chúng tôi thu thập các loại dữ liệu sau:",
+                privacyUse: "Cách chúng tôi sử dụng dữ liệu",
+                privacyUseDesc: "Chúng tôi chỉ sử dụng dữ liệu này cho:",
+                privacySecurity: "Bảo mật dữ liệu",
+                privacySecurityDesc: "Chúng tôi thực hiện các biện pháp bảo mật tiêu chuẩn ngành:",
+                privacyShare: "Chia sẻ dữ liệu",
+                privacyShareDesc: "Chúng tôi KHÔNG bán hoặc chia sẻ dữ liệu của bạn với bên thứ ba trừ:",
+                privacyRights: "Quyền của bạn",
+                privacyRightsDesc: "Bạn có quyền:",
+                privacyRetention: "Lưu trữ dữ liệu",
+                privacyRetentionDesc: "Chúng tôi chỉ lưu giữ dữ liệu trong thời gian cần thiết:",
+                privacyCompliance: "Tuân thủ",
+                privacyComplianceDesc: "Chúng tôi tuân thủ:",
+                privacyContact: "Liên hệ chúng tôi",
+                privacyContactDesc: "Đối với câu hỏi về quyền riêng tư:",
+                contactTitle: "Liên hệ",
+                footerText: "© 2025 GlobalCross E-commerce. Bảo lưu mọi quyền.",
+                footerPrivacy: "Chính sách bảo mật",
+                footerTerms: "Điều khoản dịch vụ"
+            },
+            id: {
+                navAbout: "Tentang Kami",
+                navServices: "Layanan",
+                navPrivacy: "Kebijakan Privasi",
+                navContact: "Kontak",
+                headerTitle: "GlobalCross E-commerce",
+                headerSubtitle: "Mitra TikTok Shop Terpercaya | Solusi E-commerce Lintas Batas",
+                headerBtn: "Hubungi Kami",
+                aboutTitle: "Tentang Kami",
+                aboutDesc: "GlobalCross E-commerce adalah perusahaan e-commerce lintas batas profesional yang mengkhususkan diri dalam operasi TikTok Shop di pasar Asia Tenggara, Amerika Utara, dan Eropa.",
+                statExperience: "tahun pengalaman",
+                statMarkets: "pasar dilayani",
+                statOrders: "pesanan diproses",
+                statSatisfaction: "kepuasan pelanggan",
+                servicesTitle: "Layanan Kami",
+                service1Title: "🛍️ Operasi TikTok Shop",
+                service1Desc: "Manajemen TikTok Shop lengkap termasuk daftar produk, pemenuhan pesanan, layanan pelanggan",
+                service2Title: "📊 Analisis Data",
+                service2Desc: "Analisis canggih dan intelijen bisnis untuk melacak kinerja penjualan",
+                service3Title: "🎬 Pembuatan Konten",
+                service3Desc: "Produksi konten video profesional yang dioptimalkan untuk algoritma TikTok",
+                service4Title: "🤖 Otomasi AI",
+                service4Desc: "Layanan pelanggan AI, manajemen inventaris, dan otomasi pemasaran",
+                service5Title: "🌍 Logistik Lintas Batas",
+                service5Desc: "Solusi logistik terintegrasi dengan gudang lokal dan mitra pengiriman",
+                service6Title: "📈 Strategi Pemasaran",
+                service6Desc: "Kampanye pemasaran berbasis data termasuk kemitraan influencer",
+                privacyTitle: "Kebijakan Privasi",
+                privacyIntro: "GlobalCross E-commerce berkomitmen untuk melindungi privasi Anda",
+                privacyCollect: "Data yang Kami Kumpulkan",
+                privacyCollectDesc: "Kami mengumpulkan jenis data berikut:",
+                privacyUse: "Cara Kami Menggunakan Data",
+                privacyUseDesc: "Kami menggunakan data ini hanya untuk:",
+                privacySecurity: "Keamanan Data",
+                privacySecurityDesc: "Kami menerapkan langkah keamanan standar industri:",
+                privacyShare: "Berbagi Data",
+                privacyShareDesc: "Kami TIDAK menjual atau berbagi data Anda dengan pihak ketiga kecuali:",
+                privacyRights: "Hak Anda",
+                privacyRightsDesc: "Anda memiliki hak untuk:",
+                privacyRetention: "Retensi Data",
+                privacyRetentionDesc: "Kami menyimpan data hanya selama diperlukan:",
+                privacyCompliance: "Kepatuhan",
+                privacyComplianceDesc: "Kami mematuhi:",
+                privacyContact: "Hubungi Kami",
+                privacyContactDesc: "Untuk pertanyaan privasi:",
+                contactTitle: "Hubungi Kami",
+                footerText: "© 2025 GlobalCross E-commerce. Hak cipta dilindungi.",
+                footerPrivacy: "Kebijakan Privasi",
+                footerTerms: "Syarat Layanan"
+            }
+        };
+
+        function changeLanguage(lang) {
+            const t = translations[lang];
+            if (!t) return;
+
+            // Update all elements with data-i18n attribute
+            document.querySelectorAll('[data-i18n]').forEach(el => {
+                const key = el.getAttribute('data-i18n');
+                if (t[key]) {
+                    if (el.tagName === 'INPUT' || el.tagName === 'TEXTAREA') {
+                        el.value = t[key];
+                    } else {
+                        el.textContent = t[key];
+                    }
+                }
+            });
+
+            // Update HTML lang attribute
+            document.documentElement.lang = lang === 'zh' ? 'zh-CN' : lang;
+
+            // Save preference
+            localStorage.setItem('preferredLang', lang);
+
+            // Update button states
+            document.querySelectorAll('.lang-btn').forEach(btn => {
+                btn.classList.remove('active');
+                if (btn.getAttribute('data-lang') === lang) {
+                    btn.classList.add('active');
+                }
+            });
+        }
+
+        // Load saved language preference on page load
+        document.addEventListener('DOMContentLoaded', function() {
+            const savedLang = localStorage.getItem('preferredLang') || 'zh';
+            document.getElementById('langSelect').value = savedLang;
+            changeLanguage(savedLang);
+        });
+    </script>
     <header>
         <div class="container">
-            <h1>GlobalCross E-commerce</h1>
-            <p>Your Trusted TikTok Shop Partner | Cross-Border E-commerce Solutions</p>
-            <a href="#contact" class="btn">Get in Touch</a>
+            <h1 data-i18n="headerTitle">GlobalCross E-commerce</h1>
+            <p data-i18n="headerSubtitle">Your Trusted TikTok Shop Partner | Cross-Border E-commerce Solutions</p>
+            <a href="#contact" class="btn" data-i18n="headerBtn">Get in Touch</a>
         </div>
     </header>
 
     <nav>
         <div class="container">
             <ul>
-                <li><a href="#about">About</a></li>
-                <li><a href="#services">Services</a></li>
-                <li><a href="#privacy">Privacy Policy</a></li>
-                <li><a href="#contact">Contact</a></li>
+                <li><a href="#about" data-i18n="navAbout">About</a></li>
+                <li><a href="#services" data-i18n="navServices">Services</a></li>
+                <li><a href="#privacy" data-i18n="navPrivacy">Privacy Policy</a></li>
+                <li><a href="#contact" data-i18n="navContact">Contact</a></li>
             </ul>
         </div>
     </nav>
 
     <section id="about" class="about">
         <div class="container">
-            <h2>About Us</h2>
-            <p style="text-align: center; max-width: 800px; margin: 0 auto; font-size: 1.1rem;">
+            <h2 data-i18n="aboutTitle">About Us</h2>
+            <p style="text-align: center; max-width: 800px; margin: 0 auto; font-size: 1.1rem;" data-i18n="aboutDesc">
                 GlobalCross E-commerce is a professional cross-border e-commerce company specializing in 
                 TikTok Shop operations across Southeast Asia, North America, and European markets. 
                 We leverage data-driven strategies and AI-powered tools to deliver exceptional customer 
                 experiences and drive sustainable business growth.
             </p>
-            <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 30px; margin-top: 40px; text-align: center;">
-                <div>
-                    <h3 style="font-size: 2.5rem; color: #ff0050;">5+</h3>
-                    <p>Years Experience</p>
+            <div class="stats-grid">
+                <div class="stat-item">
+                    <h3>5+</h3>
+                    <p data-i18n="statExperience">Years Experience</p>
                 </div>
-                <div>
-                    <h3 style="font-size: 2.5rem; color: #ff0050;">10+</h3>
-                    <p>Markets Served</p>
+                <div class="stat-item">
+                    <h3>10+</h3>
+                    <p data-i18n="statMarkets">Markets Served</p>
                 </div>
-                <div>
-                    <h3 style="font-size: 2.5rem; color: #ff0050;">100K+</h3>
-                    <p>Orders Processed</p>
+                <div class="stat-item">
+                    <h3>100K+</h3>
+                    <p data-i18n="statOrders">Orders Processed</p>
                 </div>
-                <div>
-                    <h3 style="font-size: 2.5rem; color: #ff0050;">98%</h3>
-                    <p>Customer Satisfaction</p>
+                <div class="stat-item">
+                    <h3>98%</h3>
+                    <p data-i18n="statSatisfaction">Customer Satisfaction</p>
                 </div>
             </div>
         </div>
@@ -83,31 +407,31 @@
 
     <section id="services" class="services">
         <div class="container">
-            <h2>Our Services</h2>
+            <h2 data-i18n="servicesTitle">Our Services</h2>
             <div class="services-grid">
                 <div class="service-card">
-                    <h3>🛍️ TikTok Shop Operations</h3>
-                    <p>Full-service TikTok Shop management including product listing, order fulfillment, customer service, and performance optimization across multiple markets.</p>
+                    <h3 data-i18n="service1Title">🛍️ TikTok Shop Operations</h3>
+                    <p data-i18n="service1Desc">Full-service TikTok Shop management including product listing, order fulfillment, customer service, and performance optimization across multiple markets.</p>
                 </div>
                 <div class="service-card">
-                    <h3>📊 Data Analytics</h3>
-                    <p>Advanced analytics and business intelligence to track sales performance, customer behavior, and market trends for data-driven decision making.</p>
+                    <h3 data-i18n="service2Title">📊 Data Analytics</h3>
+                    <p data-i18n="service2Desc">Advanced analytics and business intelligence to track sales performance, customer behavior, and market trends for data-driven decision making.</p>
                 </div>
                 <div class="service-card">
-                    <h3>🎬 Content Creation</h3>
-                    <p>Professional video content production optimized for TikTok's algorithm, driving engagement and conversions through compelling storytelling.</p>
+                    <h3 data-i18n="service3Title">🎬 Content Creation</h3>
+                    <p data-i18n="service3Desc">Professional video content production optimized for TikTok's algorithm, driving engagement and conversions through compelling storytelling.</p>
                 </div>
                 <div class="service-card">
-                    <h3>🤖 AI Automation</h3>
-                    <p>AI-powered customer service, inventory management, and marketing automation to improve efficiency and reduce operational costs.</p>
+                    <h3 data-i18n="service4Title">🤖 AI Automation</h3>
+                    <p data-i18n="service4Desc">AI-powered customer service, inventory management, and marketing automation to improve efficiency and reduce operational costs.</p>
                 </div>
                 <div class="service-card">
-                    <h3>🌍 Cross-Border Logistics</h3>
-                    <p>Integrated logistics solutions with local warehouses and shipping partners to ensure fast, reliable delivery worldwide.</p>
+                    <h3 data-i18n="service5Title">🌍 Cross-Border Logistics</h3>
+                    <p data-i18n="service5Desc">Integrated logistics solutions with local warehouses and shipping partners to ensure fast, reliable delivery worldwide.</p>
                 </div>
                 <div class="service-card">
-                    <h3>📈 Marketing Strategy</h3>
-                    <p>Data-driven marketing campaigns including influencer partnerships, paid advertising, and organic growth strategies.</p>
+                    <h3 data-i18n="service6Title">📈 Marketing Strategy</h3>
+                    <p data-i18n="service6Desc">Data-driven marketing campaigns including influencer partnerships, paid advertising, and organic growth strategies.</p>
                 </div>
             </div>
         </div>
@@ -115,86 +439,85 @@
 
     <section id="privacy" class="about">
         <div class="container">
-            <h2>Privacy Policy</h2>
-            <div style="background: white; padding: 40px; border-radius: 10px; max-width: 900px; margin: 0 auto;">
-                <h3 style="color: #ff0050; margin-bottom: 15px;">1. Introduction</h3>
-                <p style="margin-bottom: 20px;">GlobalCross E-commerce ("we", "our", "us") is committed to protecting your privacy. This Privacy Policy explains how we collect, use, and safeguard your information when you use our services.</p>
+            <h2 data-i18n="privacyTitle">Privacy Policy</h2>
+            <div class="privacy-content">
+                <h3 data-i18n="privacyIntro">1. Introduction</h3>
+                <p data-i18n="privacyIntro">GlobalCross E-commerce ("we", "our", "us") is committed to protecting your privacy. This Privacy Policy explains how we collect, use, and safeguard your information when you use our services.</p>
 
-                <h3 style="color: #ff0050; margin-bottom: 15px;">2. Data We Collect</h3>
-                <p style="margin-bottom: 20px;">We collect the following types of data:</p>
-                <ul style="margin-left: 20px; margin-bottom: 20px;">
-                    <li>Order information (order ID, products, shipping address)</li>
-                    <li>Customer service messages and inquiries</li>
-                    <li>Website analytics data (with consent)</li>
-                    <li>User profile information (with consent)</li>
+                <h3 data-i18n="privacyCollect">2. Data We Collect</h3>
+                <p data-i18n="privacyCollectDesc">We collect the following types of data:</p>
+                <ul>
+                    <li data-i18n="privacyCollect1">Order information (order ID, products, shipping address)</li>
+                    <li data-i18n="privacyCollect2">Customer service messages and inquiries</li>
+                    <li data-i18n="privacyCollect3">Website analytics data (with consent)</li>
+                    <li data-i18n="privacyCollect4">User profile information (with consent)</li>
                 </ul>
 
-                <h3 style="color: #ff0050; margin-bottom: 15px;">3. How We Use Data</h3>
-                <p style="margin-bottom: 20px;">We use this data solely for:</p>
-                <ul style="margin-left: 20px; margin-bottom: 20px;">
-                    <li>Processing and fulfilling orders</li>
-                    <li>Providing customer support</li>
-                    <li>Business analytics and optimization</li>
-                    <li>Improving our services</li>
-                    <li>Compliance with legal requirements</li>
+                <h3 data-i18n="privacyUse">3. How We Use Data</h3>
+                <p data-i18n="privacyUseDesc">We use this data solely for:</p>
+                <ul>
+                    <li data-i18n="privacyUse1">Processing and fulfilling orders</li>
+                    <li data-i18n="privacyUse2">Providing customer support</li>
+                    <li data-i18n="privacyUse3">Business analytics and optimization</li>
+                    <li data-i18n="privacyUse4">Improving our services</li>
+                    <li data-i18n="privacyUse5">Compliance with legal requirements</li>
                 </ul>
 
-                <h3 style="color: #ff0050; margin-bottom: 15px;">4. Data Security</h3>
-                <p style="margin-bottom: 20px;">We implement industry-standard security measures:</p>
-                <ul style="margin-left: 20px; margin-bottom: 20px;">
-                    <li>Data encryption (AES-256)</li>
-                    <li>Secure cloud servers (AWS/Azure)</li>
-                    <li>Access controls and multi-factor authentication</li>
-                    <li>Regular security audits and updates</li>
-                    <li>Employee training on data protection</li>
+                <h3 data-i18n="privacySecurity">4. Data Security</h3>
+                <p data-i18n="privacySecurityDesc">We implement industry-standard security measures:</p>
+                <ul>
+                    <li data-i18n="privacySecurity1">Data encryption (AES-256)</li>
+                    <li data-i18n="privacySecurity2">Secure cloud servers (AWS/Azure)</li>
+                    <li data-i18n="privacySecurity3">Access controls and multi-factor authentication</li>
+                    <li data-i18n="privacySecurity4">Regular security audits and updates</li>
+                    <li data-i18n="privacySecurity5">Employee training on data protection</li>
                 </ul>
 
-                <h3 style="color: #ff0050; margin-bottom: 15px;">5. Data Sharing</h3>
-                <p style="margin-bottom: 20px;">We DO NOT sell or share your data with third parties except:</p>
-                <ul style="margin-left: 20px; margin-bottom: 20px;">
-                    <li>Shipping partners (for order fulfillment)</li>
-                    <li>Payment processors (for transactions)</li>
-                    <li>Legal requirements (if required by law)</li>
-                    <li>Service providers (under strict confidentiality agreements)</li>
+                <h3 data-i18n="privacyShare">5. Data Sharing</h3>
+                <p data-i18n="privacyShareDesc">We DO NOT sell or share your data with third parties except:</p>
+                <ul>
+                    <li data-i18n="privacyShare1">Shipping partners (for order fulfillment)</li>
+                    <li data-i18n="privacyShare2">Payment processors (for transactions)</li>
+                    <li data-i18n="privacyShare3">Legal requirements (if required by law)</li>
+                    <li data-i18n="privacyShare4">Service providers (under strict confidentiality agreements)</li>
                 </ul>
 
-                <h3 style="color: #ff0050; margin-bottom: 15px;">6. Your Rights</h3>
-                <p style="margin-bottom: 20px;">You have the right to:</p>
-                <ul style="margin-left: 20px; margin-bottom: 20px;">
-                    <li>Access your personal data</li>
-                    <li>Request data correction or deletion</li>
-                    <li>Opt-out of marketing communications</li>
-                    <li>File complaints with relevant authorities</li>
+                <h3 data-i18n="privacyRights">6. Your Rights</h3>
+                <p data-i18n="privacyRightsDesc">You have the right to:</p>
+                <ul>
+                    <li data-i18n="privacyRights1">Access your personal data</li>
+                    <li data-i18n="privacyRights2">Request data correction or deletion</li>
+                    <li data-i18n="privacyRights3">Opt-out of marketing communications</li>
+                    <li data-i18n="privacyRights4">File complaints with relevant authorities</li>
                 </ul>
 
-                <h3 style="color: #ff0050; margin-bottom: 15px;">7. Data Retention</h3>
-                <p style="margin-bottom: 20px;">We retain data only as long as necessary:</p>
-                <ul style="margin-left: 20px; margin-bottom: 20px;">
-                    <li>Order data: 3 years (legal requirement)</li>
-                    <li>Analytics data: 1 year</li>
-                    <li>Customer messages: 6 months</li>
-                    <li>Marketing data: Until opt-out</li>
+                <h3 data-i18n="privacyRetention">7. Data Retention</h3>
+                <p data-i18n="privacyRetentionDesc">We retain data only as long as necessary:</p>
+                <ul>
+                    <li data-i18n="privacyRetention1">Order data: 3 years (legal requirement)</li>
+                    <li data-i18n="privacyRetention2">Analytics data: 1 year</li>
+                    <li data-i18n="privacyRetention3">Customer messages: 6 months</li>
+                    <li data-i18n="privacyRetention4">Marketing data: Until opt-out</li>
                 </ul>
 
-                <h3 style="color: #ff0050; margin-bottom: 15px;">8. Compliance</h3>
-                <p style="margin-bottom: 20px;">We comply with:</p>
-                <ul style="margin-left: 20px; margin-bottom: 20px;">
-                    <li>GDPR (European Union General Data Protection Regulation)</li>
-                    <li>CCPA (California Consumer Privacy Act)</li>
-                    <li>Local data protection laws in all operating regions</li>
+                <h3 data-i18n="privacyCompliance">8. Compliance</h3>
+                <p data-i18n="privacyComplianceDesc">We comply with:</p>
+                <ul>
+                    <li data-i18n="privacyCompliance1">GDPR (European Union General Data Protection Regulation)</li>
+                    <li data-i18n="privacyCompliance2">CCPA (California Consumer Privacy Act)</li>
+                    <li data-i18n="privacyCompliance3">Local data protection laws in all operating regions</li>
                 </ul>
 
-                <h3 style="color: #ff0050; margin-bottom: 15px;">9. Contact Us</h3>
-                <p style="margin-bottom: 20px;">For privacy questions or data requests:</p>
-                <p style="margin-bottom: 10px;"><strong>Email:</strong> privacy@globalcross-ecom.com</p>
-                <p><strong>Address:</strong> [Your Business Address]</p>
+                <h3 data-i18n="privacyContact">9. Contact Us</h3>
+                <p data-i18n="privacyContactDesc">For privacy questions or data requests:</p>
+                <p><strong>Email:</strong> privacy@globalcross-ecom.com</p>
             </div>
         </div>
     </section>
 
     <section id="contact" class="contact">
         <div class="container">
-            <h2>Contact Us</h2>
+            <h2 data-i18n="contactTitle">Contact Us</h2>
             <div class="contact-info">
                 <p>📧 Email: contact@globalcross-ecom.com</p>
                 <p>📧 Privacy: privacy@globalcross-ecom.com</p>
@@ -207,10 +530,10 @@
 
     <footer>
         <div class="container">
-            <p>&copy; 2025 GlobalCross E-commerce. All rights reserved.</p>
+            <p data-i18n="footerText">&copy; 2025 GlobalCross E-commerce. All rights reserved.</p>
             <p style="margin-top: 10px; font-size: 0.9rem; opacity: 0.7;">
-                <a href="#privacy" style="color: white;">Privacy Policy</a> | 
-                <a href="#" style="color: white;">Terms of Service</a>
+                <a href="#privacy" style="color: white;" data-i18n="footerPrivacy">Privacy Policy</a> | 
+                <a href="#" style="color: white;" data-i18n="footerTerms">Terms of Service</a>
             </p>
         </div>
     </footer>
